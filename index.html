@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRIDO AI Token Studio Pro v3.0 - Green & Gold Cyber Edition</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              green: '#22c55e',
+              emerald: '#10b981',
+              lime: '#84cc16',
+              yellow: '#eab308',
+              gold: '#facc15',
+              dark: '#050c08',
+              card: '#0c1a12',
+              border: '#1b3826',
+            }
+          },
+          animation: {
+            'glow-pulse': 'glowPulse 3s infinite ease-in-out',
+            'float-slow': 'float 6s infinite ease-in-out',
+            'chip-pop': 'chipPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          },
+          keyframes: {
+            glowPulse: {
+              '0%, 100%': { boxShadow: '0 0 15px rgba(34, 197, 94, 0.25), 0 0 30px rgba(250, 204, 21, 0.15)' },
+              '50%': { boxShadow: '0 0 25px rgba(34, 197, 94, 0.5), 0 0 50px rgba(250, 204, 21, 0.3)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            },
+            chipPop: {
+              '0%': { transform: 'scale(0.85)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #050d08;
+      color: #f0fdf4;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Dynamic Canvas Background Layer */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Glassmorphism Styles with Green/Yellow Accents */
+    .glass-panel {
+      background: rgba(10, 24, 16, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .glass-card {
+      background: rgba(15, 32, 22, 0.55);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(250, 204, 21, 0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(34, 197, 94, 0.5);
+      box-shadow: 0 8px 24px -6px rgba(34, 197, 94, 0.25);
+    }
+
+    /* Custom Green-Yellow Glowing Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(5, 13, 8, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #22c55e, #eab308);
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(to bottom, #4ade80, #facc15);
+    }
+
+    /* Token Visualizer Chips Palette (Green & Yellow Variations) */
+    .token-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      margin: 2px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+
+    .token-chip:hover {
+      transform: translateY(-3px) scale(1.08);
+      box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+      z-index: 20;
+    }
+
+    /* Dynamic Token Color Variants */
+    .token-c0 { background: rgba(34, 197, 94, 0.22); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.45); }
+    .token-c1 { background: rgba(234, 179, 8, 0.22); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.45); }
+    .token-c2 { background: rgba(132, 204, 22, 0.22); color: #bef264; border: 1px solid rgba(132, 204, 22, 0.45); }
+    .token-c3 { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.45); }
+    .token-c4 { background: rgba(250, 204, 21, 0.22); color: #fde047; border: 1px solid rgba(250, 204, 21, 0.45); }
+    .token-c5 { background: rgba(20, 184, 166, 0.22); color: #5eead4; border: 1px solid rgba(20, 184, 166, 0.45); }
+
+    .token-special {
+      background: rgba(239, 68, 68, 0.25) !important;
+      color: #fca5a5 !important;
+      border: 1px dashed rgba(239, 68, 68, 0.7) !important;
+      font-weight: 700;
+    }
+
+    /* Heatmap Color Grading */
+    .heat-low { background: rgba(34, 197, 94, 0.15); color: #86efac; }
+    .heat-mid { background: rgba(234, 179, 8, 0.25); color: #fde047; }
+    .heat-high { background: rgba(249, 115, 22, 0.35); color: #ffedd5; }
+
+    /* Animated Cyber Gradient Text */
+    .gradient-text-gy {
+      background: linear-gradient(135deg, #4ade80 0%, #facc15 50%, #22c55e 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between selection:bg-yellow-400 selection:text-slate-950">
+
+  <!-- Interactive Background Canvas Animation -->
+  <canvas id="bgCanvas"></canvas>
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-emerald-900/60 px-4 sm:px-8 py-3.5 flex justify-between items-center animate-glow-pulse">
+    <div class="flex items-center gap-3.5">
+      <div class="relative group cursor-pointer" onclick="loadSamplePrompt('code')">
+        <div class="absolute -inset-1 bg-gradient-to-r from-green-500 via-yellow-400 to-emerald-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
+        <div class="relative bg-slate-950 p-2.5 rounded-xl flex items-center justify-center border border-emerald-500/40">
+          <i class="fa-solid fa-microchip text-yellow-400 text-xl animate-bounce"></i>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl font-extrabold tracking-tight gradient-text-gy">
+            PRIDO AI Token Studio
+          </h1>
+          <span class="px-2.5 py-0.5 text-[10px] font-extrabold bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 rounded-full uppercase tracking-wider animate-pulse">
+            CYBER PRO v3.0
+          </span>
+        </div>
+        <p class="text-xs text-emerald-400/80 hidden sm:block">Next-Gen Multilingual Tokenizer, BPE Inspector & AI Prompt Refiner</p>
+      </div>
+    </div>
+
+    <!-- Header Actions & Model Picker -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center bg-slate-950/90 border border-emerald-500/30 rounded-xl p-1 shadow-inner">
+        <label for="modelSelect" class="text-xs text-yellow-400/90 px-2 font-medium hidden md:block flex items-center gap-1">
+          <i class="fa-solid fa-bolt text-yellow-400"></i> Model:
+        </label>
+        <select id="modelSelect" onchange="processTokens()" class="bg-slate-950 text-xs text-emerald-300 font-bold focus:outline-none cursor-pointer pr-2 py-1">
+          <option value="gpt-4o">OpenAI GPT-4o ($2.50 / 1M)</option>
+          <option value="claude-3-5-sonnet">Claude 3.5 Sonnet ($3.00 / 1M)</option>
+          <option value="gemini-1-5-pro">Gemini 1.5 Pro ($1.25 / 1M)</option>
+          <option value="deepseek-v3">DeepSeek V3 ($0.27 / 1M)</option>
+          <option value="llama-3">Meta Llama 3 70B ($0.00 / Free)</option>
+        </select>
+      </div>
+
+      <button onclick="toggleComparisonModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-slate-950 rounded-lg shadow-lg transition active:scale-95">
+        <i class="fa-solid fa-code-compare"></i> Compare Models
+      </button>
+
+      <button onclick="toggleAdvantagesModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-slate-900 hover:bg-emerald-950 text-yellow-300 border border-yellow-500/40 rounded-lg shadow-lg transition active:scale-95">
+        <i class="fa-solid fa-bolt text-yellow-400"></i> Advantages
+      </button>
+
+      <button onclick="toggleFounderModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-slate-950 rounded-lg shadow-lg transition active:scale-95">
+        <i class="fa-solid fa-user-astronaut"></i> Founder
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 z-10">
+
+    <!-- Left Column: Interactive Input Prompt & AI Tools -->
+    <section class="lg:col-span-6 flex flex-col gap-4">
+      <div class="glass-panel rounded-2xl p-5 flex flex-col h-full border border-emerald-500/30 relative">
+        
+        <!-- Editor Header Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-emerald-900/60">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-yellow-400 animate-ping"></span>
+            <h2 class="text-sm font-bold text-emerald-200 flex items-center gap-2">
+              <i class="fa-regular fa-pen-to-square text-yellow-400"></i> Interactive Prompt Editor
+            </h2>
+          </div>
+
+          <!-- Quick Actions & Presets Dropdown -->
+          <div class="flex items-center gap-2">
+            <div class="relative inline-block text-left">
+              <button onclick="togglePresetMenu()" class="text-xs px-2.5 py-1.5 bg-slate-900/80 hover:bg-emerald-900/50 text-yellow-300 rounded-lg border border-yellow-500/30 transition flex items-center gap-1.5 font-medium">
+                <i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i> Presets <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              </button>
+              <div id="presetMenu" class="hidden absolute right-0 mt-2 w-52 rounded-xl glass-panel bg-slate-950 border border-emerald-500/40 shadow-2xl z-50 py-1">
+                <button onclick="loadSamplePrompt('chat'); togglePresetMenu();" class="w-full text-left px-3 py-2 text-xs text-emerald-200 hover:bg-emerald-800/40 hover:text-white flex items-center gap-2">
+                  <i class="fa-regular fa-comments text-yellow-400"></i> Chat Format (<|im_start|>)
+                </button>
+                <button onclick="loadSamplePrompt('code'); togglePresetMenu();" class="w-full text-left px-3 py-2 text-xs text-emerald-200 hover:bg-emerald-800/40 hover:text-white flex items-center gap-2">
+                  <i class="fa-solid fa-code text-green-400"></i> Python AI Tokenizer
+                </button>
+                <button onclick="loadSamplePrompt('hindi'); togglePresetMenu();" class="w-full text-left px-3 py-2 text-xs text-emerald-200 hover:bg-emerald-800/40 hover:text-white flex items-center gap-2">
+                  <i class="fa-solid fa-language text-yellow-300"></i> Multilingual (Hindi/English)
+                </button>
+                <button onclick="loadSamplePrompt('long'); togglePresetMenu();" class="w-full text-left px-3 py-2 text-xs text-emerald-200 hover:bg-emerald-800/40 hover:text-white flex items-center gap-2">
+                  <i class="fa-solid fa-file-lines text-lime-400"></i> Heavy Technical Essay
+                </button>
+              </div>
+            </div>
+
+            <!-- Gemini Live Prompt Optimizer -->
+            <button onclick="optimizePromptWithAI()" id="aiRefineBtn" class="text-xs px-2.5 py-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-slate-950 font-bold rounded-lg transition shadow-md flex items-center gap-1">
+              <i class="fa-solid fa-bolt-lightning"></i> AI Compress
+            </button>
+
+            <button onclick="clearText()" class="text-xs px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-lg transition flex items-center gap-1">
+              <i class="fa-solid fa-trash-can"></i> Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Input Text Area -->
+        <div class="relative flex-1 min-h-[300px] flex flex-col">
+          <textarea id="inputText" 
+            placeholder="Type or paste text, code, or prompts here to visualize real-time byte-pair encoding (BPE) token splits..."
+            class="w-full h-full min-h-[280px] bg-slate-950/90 border border-emerald-900/80 rounded-xl p-4 text-sm font-mono text-emerald-100 placeholder-emerald-700 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition resize-none leading-relaxed"
+            oninput="processTokens()"
+            spellcheck="false"></textarea>
+          
+          <div class="absolute bottom-3 right-3 text-[11px] text-yellow-400/90 font-mono bg-slate-950/90 px-2.5 py-1 rounded border border-emerald-500/30 flex items-center gap-1.5 shadow-md">
+            <i class="fa-solid fa-wave-square animate-pulse text-green-400"></i> Real-time Analysis
+          </div>
+        </div>
+
+        <!-- Control Bar for Whitespace & Special Tokens -->
+        <div class="mt-4 pt-3 border-t border-emerald-900/60 flex flex-wrap items-center justify-between text-xs text-emerald-300/80 gap-3">
+          <label class="flex items-center gap-2 cursor-pointer hover:text-yellow-300 transition">
+            <input type="checkbox" id="showWhitespaceToggle" onchange="processTokens()" checked class="rounded border-emerald-700 bg-slate-900 text-yellow-400 focus:ring-yellow-400">
+            <span>Show Spaces (<span class="font-mono text-yellow-400">␣</span> & <span class="font-mono text-yellow-400">↵</span>)</span>
+          </label>
+
+          <label class="flex items-center gap-2 cursor-pointer hover:text-yellow-300 transition">
+            <input type="checkbox" id="specialTokensToggle" onchange="processTokens()" checked class="rounded border-emerald-700 bg-slate-900 text-yellow-400 focus:ring-yellow-400">
+            <span>Parse Special Tokens (<span class="font-mono text-rose-400">&lt;|im_start|&gt;</span>)</span>
+          </label>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-emerald-400 font-semibold">View Mode:</span>
+            <select id="viewModeSelect" onchange="processTokens()" class="bg-slate-950 border border-emerald-600/40 text-yellow-300 text-xs rounded px-2 py-0.5 focus:outline-none">
+              <option value="chips">Color Chips</option>
+              <option value="heatmap">Density Heatmap</option>
+              <option value="hex">Byte / Hex Stream</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right Column: Metrics, Token Visualizer, BPE Slider -->
+    <section class="lg:col-span-6 flex flex-col gap-4">
+      
+      <!-- Metrics Overview Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <!-- Tokens -->
+        <div class="glass-panel rounded-xl p-3.5 border border-emerald-500/30 flex flex-col justify-between hover:border-yellow-400/50 transition">
+          <div class="flex items-center justify-between text-emerald-300 text-xs font-semibold">
+            <span>Total Tokens</span>
+            <i class="fa-solid fa-coins text-yellow-400"></i>
+          </div>
+          <p id="statTokens" class="text-2xl font-black font-mono text-yellow-400 mt-2">0</p>
+          <p class="text-[10px] text-emerald-400/70 mt-1">LLM Work Units</p>
+        </div>
+
+        <!-- Words -->
+        <div class="glass-panel rounded-xl p-3.5 border border-emerald-500/30 flex flex-col justify-between hover:border-green-400/50 transition">
+          <div class="flex items-center justify-between text-emerald-300 text-xs font-semibold">
+            <span>Words</span>
+            <i class="fa-solid fa-font text-green-400"></i>
+          </div>
+          <p id="statWords" class="text-2xl font-black font-mono text-green-400 mt-2">0</p>
+          <p class="text-[10px] text-emerald-400/70 mt-1" id="statRatio">0.0 tok/word</p>
+        </div>
+
+        <!-- Characters -->
+        <div class="glass-panel rounded-xl p-3.5 border border-emerald-500/30 flex flex-col justify-between hover:border-lime-400/50 transition">
+          <div class="flex items-center justify-between text-emerald-300 text-xs font-semibold">
+            <span>Characters</span>
+            <i class="fa-solid fa-hashtag text-lime-400"></i>
+          </div>
+          <p id="statChars" class="text-2xl font-black font-mono text-lime-400 mt-2">0</p>
+          <p class="text-[10px] text-emerald-400/70 mt-1" id="statCharRatio">0.0 char/tok</p>
+        </div>
+
+        <!-- Cost -->
+        <div class="glass-panel rounded-xl p-3.5 border border-yellow-500/40 flex flex-col justify-between bg-gradient-to-br from-yellow-500/10 to-transparent">
+          <div class="flex items-center justify-between text-emerald-300 text-xs font-semibold">
+            <span>Est. API Cost</span>
+            <i class="fa-solid fa-dollar-sign text-yellow-300 animate-pulse"></i>
+          </div>
+          <p id="statCost" class="text-xl font-black font-mono text-yellow-300 mt-2">$0.00000</p>
+          <p class="text-[10px] text-yellow-400/80 mt-1" id="modelRateInfo">OpenAI Rate</p>
+        </div>
+      </div>
+
+      <!-- Color Token Visualizer Canvas -->
+      <div class="glass-panel rounded-2xl p-5 border border-emerald-500/30 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-emerald-200 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-yellow-400"></i> Token Chunk Visualizer
+          </h3>
+          <span class="text-[11px] text-emerald-400/80"><i class="fa-solid fa-hand-pointer text-yellow-400"></i> Click chip to inspect token details</span>
+        </div>
+
+        <div id="tokenVisualizer" class="min-h-[140px] max-h-[210px] overflow-y-auto p-3.5 bg-slate-950/90 rounded-xl border border-emerald-900/80 flex flex-wrap content-start gap-0.5 font-mono text-sm leading-relaxed">
+          <div class="w-full h-full flex flex-col items-center justify-center text-emerald-600 text-xs py-8">
+            <i class="fa-solid fa-cube text-3xl mb-2 text-yellow-400/40 animate-pulse"></i>
+            <span>Type or paste prompt to visualize subword token chunks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Token IDs Array Stream -->
+      <div class="glass-panel rounded-2xl p-5 border border-emerald-500/30 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-emerald-200 flex items-center gap-2">
+            <i class="fa-solid fa-list-ol text-green-400"></i> Generated Vocabulary Token IDs
+          </h3>
+
+          <div class="flex items-center gap-2">
+            <button onclick="copyTokenIDs('raw')" class="text-xs px-2.5 py-1 bg-slate-900 hover:bg-emerald-950 text-yellow-300 rounded-lg border border-yellow-500/30 transition flex items-center gap-1 font-semibold">
+              <i class="fa-regular fa-copy"></i> Copy Array
+            </button>
+            <button onclick="copyTokenIDs('json')" class="text-xs px-2.5 py-1 bg-slate-900 hover:bg-emerald-950 text-green-300 rounded-lg border border-emerald-500/30 transition flex items-center gap-1 font-semibold">
+              <i class="fa-solid fa-code"></i> JSON
+            </button>
+          </div>
+        </div>
+
+        <div id="tokenIDsContainer" class="min-h-[75px] max-h-[110px] overflow-y-auto p-3 bg-slate-950/90 rounded-xl border border-emerald-900/80 font-mono text-xs text-yellow-300/90 break-all leading-normal selection:bg-yellow-400 selection:text-slate-950">
+          [ ]
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL 1: Individual Token Detail Inspector Modal -->
+  <div id="tokenModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel bg-slate-950 border border-yellow-400/50 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300" id="tokenModalBox">
+      <button onclick="closeTokenModal()" class="absolute top-4 right-4 text-emerald-400 hover:text-yellow-400 text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="p-3 bg-yellow-400/20 text-yellow-400 border border-yellow-400/40 rounded-xl">
+          <i class="fa-solid fa-magnifying-glass-chart text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-yellow-300">Token Detailed Inspector</h3>
+          <p class="text-xs text-emerald-400">Byte & Character Breakdown</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <div class="p-3 bg-slate-900 rounded-lg border border-emerald-900/80 flex justify-between items-center">
+          <span class="text-emerald-400">Raw Token String:</span>
+          <span id="mTokenString" class="text-yellow-300 font-bold bg-slate-950 px-2 py-1 rounded border border-yellow-500/30">""</span>
+        </div>
+
+        <div class="p-3 bg-slate-900 rounded-lg border border-emerald-900/80 flex justify-between items-center">
+          <span class="text-emerald-400">Vocabulary Token ID:</span>
+          <span id="mTokenId" class="text-green-400 font-extrabold text-sm">0</span>
+        </div>
+
+        <div class="p-3 bg-slate-900 rounded-lg border border-emerald-900/80 flex justify-between items-center">
+          <span class="text-emerald-400">Character Length:</span>
+          <span id="mTokenLen" class="text-emerald-200">0 chars</span>
+        </div>
+
+        <div class="p-3 bg-slate-900 rounded-lg border border-emerald-900/80 flex justify-between items-center">
+          <span class="text-emerald-400">Hexadecimal Value:</span>
+          <span id="mTokenHex" class="text-lime-300 font-bold">0x00</span>
+        </div>
+
+        <div class="p-3 bg-slate-900 rounded-lg border border-emerald-900/80 flex justify-between items-center">
+          <span class="text-emerald-400">Token Classification:</span>
+          <span id="mTokenType" class="text-yellow-400 font-semibold uppercase">WORD</span>
+        </div>
+      </div>
+
+      <button onclick="closeTokenModal()" class="w-full mt-5 py-2.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-slate-950 font-bold rounded-xl transition">
+        Close Inspector
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Multi-Model Token & Cost Comparison Modal -->
+  <div id="compareModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel bg-slate-950 border border-emerald-500/50 rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300">
+      <button onclick="toggleComparisonModal()" class="absolute top-4 right-4 text-emerald-400 hover:text-yellow-400 text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-5">
+        <div class="p-3 bg-green-500/20 text-green-400 border border-green-500/40 rounded-xl">
+          <i class="fa-solid fa-table-list text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-yellow-300">LLM Multi-Model Side-by-Side Comparison</h3>
+          <p class="text-xs text-emerald-400">Token Count, Context Usage, & Cost Analysis</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left font-mono text-xs text-emerald-200">
+          <thead>
+            <tr class="border-b border-emerald-800/80 text-yellow-400 pb-2">
+              <th class="py-2.5 px-3">Model Name</th>
+              <th class="py-2.5 px-3">Tokens</th>
+              <th class="py-2.5 px-3">Rate / 1M</th>
+              <th class="py-2.5 px-3">Est. Cost</th>
+              <th class="py-2.5 px-3">Context %</th>
+            </tr>
+          </thead>
+          <tbody id="compareTableBody" class="divide-y divide-emerald-950">
+            <!-- Dynamic Comparison Rows populated via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <button onclick="toggleComparisonModal()" class="w-full mt-6 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-bold rounded-xl transition">
+        Return to Editor
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Advantages & Core Benefits Modal -->
+  <div id="advantagesModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel bg-slate-950 border border-yellow-400/50 rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300">
+      <button onclick="toggleAdvantagesModal()" class="absolute top-4 right-4 text-emerald-400 hover:text-yellow-400 text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-5">
+        <div class="p-3 bg-yellow-400/20 text-yellow-400 border border-yellow-400/40 rounded-xl">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-yellow-300">Why Choose PRIDO AI Token Studio?</h3>
+          <p class="text-xs text-emerald-400">Core Advantages & Production-Grade Capabilities</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="glass-card p-4 rounded-xl border border-emerald-500/30 flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-yellow-400 font-bold">
+            <i class="fa-solid fa-cubes text-base"></i> Real-time Subword BPE
+          </div>
+          <p class="text-emerald-300/80 leading-relaxed">Visualize exact token splits, special tokens, character counts, and hexadecimal representations instantaneously.</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border border-emerald-500/30 flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-green-400 font-bold">
+            <i class="fa-solid fa-wand-magic-sparkles text-base"></i> Gemini AI Compression
+          </div>
+          <p class="text-emerald-300/80 leading-relaxed">Integrated LLM-driven prompt refiner to eliminate redundant tokens and cut API expenses while keeping key meaning intact.</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border border-emerald-500/30 flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-lime-400 font-bold">
+            <i class="fa-solid fa-calculator text-base"></i> Multi-Model Cost Analytics
+          </div>
+          <p class="text-emerald-300/80 leading-relaxed">Compare pricing and context usage across OpenAI GPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, and DeepSeek V3.</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border border-emerald-500/30 flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-yellow-300 font-bold">
+            <i class="fa-solid fa-language text-base"></i> Multilingual & Code Aware
+          </div>
+          <p class="text-emerald-300/80 leading-relaxed">Optimized token parser for complex code, UTF-8 strings, chat formats (`<|im_start|>`), and non-Latin scripts (Devanagari, Hindi).</p>
+        </div>
+      </div>
+
+      <button onclick="toggleAdvantagesModal()" class="w-full mt-6 py-2.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-slate-950 font-bold rounded-xl transition">
+        Explore Studio Tools
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Founder Profile & Vision Modal -->
+  <div id="founderModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel bg-slate-950 border border-yellow-400/50 rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300">
+      <button onclick="toggleFounderModal()" class="absolute top-4 right-4 text-emerald-400 hover:text-yellow-400 text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex flex-col items-center text-center mb-5">
+        <div class="relative mb-3">
+          <div class="absolute -inset-1 bg-gradient-to-r from-green-500 via-yellow-400 to-emerald-500 rounded-full blur opacity-75"></div>
+          <div class="relative w-20 h-20 bg-slate-950 rounded-full border-2 border-yellow-400 flex items-center justify-center shadow-xl">
+            <i class="fa-solid fa-user-gear text-3xl text-yellow-400"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-extrabold text-yellow-300">Pritam Kumar Mandal</h3>
+        <p class="text-xs text-emerald-400 font-medium">Founder & Lead AI Architect @ PRIDO AI</p>
+      </div>
+
+      <div class="space-y-3 text-xs text-emerald-200">
+        <div class="glass-card p-3.5 rounded-xl border border-emerald-500/30">
+          <p class="text-emerald-300/90 leading-relaxed text-center">
+            "Building high-performance AI developer tooling, tokenomics visualizers, and intelligent neural workflows to make LLM engineering accessible, transparent, and cost-efficient worldwide."
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-center font-mono text-[11px]">
+          <div class="bg-slate-900/80 p-2.5 rounded-lg border border-emerald-900/80">
+            <span class="text-yellow-400 font-bold block">Engine Core</span>
+            <span class="text-emerald-400">BPE & LLM Studio</span>
+          </div>
+          <div class="bg-slate-900/80 p-2.5 rounded-lg border border-emerald-900/80">
+            <span class="text-green-400 font-bold block">Ecosystem</span>
+            <span class="text-emerald-400">PRIDO AI Cyber</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-center gap-3">
+        <button onclick="showToast('Connecting with Pritam Kumar Mandal...')" class="flex-1 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-lg">
+          <i class="fa-solid fa-paper-plane"></i> Contact Founder
+        </button>
+        <button onclick="toggleFounderModal()" class="py-2 px-4 bg-slate-900 hover:bg-emerald-950 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-semibold transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Bar -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="glass-panel bg-slate-950 border border-yellow-400/50 text-yellow-200 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+      <div class="w-3 h-3 rounded-full bg-yellow-400 animate-ping"></div>
+      <i class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+      <span id="toastMessage" class="text-xs font-semibold">Action completed successfully!</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-emerald-900/60 glass-panel py-4 px-6 text-center text-xs text-emerald-500/80 flex flex-col sm:flex-row justify-between items-center gap-2 z-10">
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-emerald-300">PRIDO AI Ecosystem</span>
+      <span>•</span>
+      <span>Cyber Token Studio Engine v3.0</span>
+    </div>
+    <div>
+      Designed & Engineered by <span class="text-yellow-400 font-bold">Pritam Kumar Mandal</span>
+    </div>
+  </footer>
+
+  <script>
+    // Green & Yellow Particle Mesh Canvas Animation
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    const particleCount = 45;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = (Math.random() - 0.5) * 0.6;
+        this.radius = Math.random() * 2 + 1;
+        this.color = Math.random() > 0.5 ? '#22c55e' : '#facc15';
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.4;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = '#22c55e';
+            ctx.globalAlpha = (1 - dist / 120) * 0.15;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // LLM Models Rates ($ Per 1,000,000 Tokens) & Context Windows
+    const MODEL_SPECS = {
+      'gpt-4o': { name: 'OpenAI GPT-4o', ratePerM: 2.50, context: 128000 },
+      'claude-3-5-sonnet': { name: 'Claude 3.5 Sonnet', ratePerM: 3.00, context: 200000 },
+      'gemini-1-5-pro': { name: 'Gemini 1.5 Pro', ratePerM: 1.25, context: 2000000 },
+      'deepseek-v3': { name: 'DeepSeek V3', ratePerM: 0.27, context: 64000 },
+      'llama-3': { name: 'Meta Llama 3 70B', ratePerM: 0.00, context: 8192 }
+    };
+
+    const COLOR_CLASSES = ['token-c0', 'token-c1', 'token-c2', 'token-c3', 'token-c4', 'token-c5'];
+
+    // Preset Sample Database
+    const SAMPLE_PROMPTS = {
+      chat: `<|im_start|>system\nYou are PRIDO AI, an expert code optimization engine.<|im_end|>\n<|im_start|>user\nHow can I optimize token length for cost efficiency?<|im_end|>\n<|im_start|>assistant\n`,
+      code: `def bpe_tokenize(text: str) -> list[int]:\n    # PRIDO Tokenizer Engine v3.0\n    import re\n    tokens = re.findall(r'\\w+|[^\\w\\s]|\\s+', text)\n    return [hash(t) % 100256 for t in tokens]\n\nprint("Tokens calculated successfully!")`,
+      hindi: `नमस्ते! PRIDO AI Token Studio में आपका स्वागत है। यह एडवांस AI टूल हिंदी और इंग्लिश दोनों को रियल-टाइम टोकनाइज़ करता है।`,
+      long: `Artificial Intelligence and Large Language Models rely fundamentally on Byte-Pair Encoding (BPE) subword tokenization. Tokenization converts unstructured text into numerical identifier vectors that neural network transformers can process efficiently.`
+    };
+
+    let generatedTokensData = [];
+
+    // Hash Algorithm to map strings deterministically to Vocabulary Token IDs
+    function generateTokenID(tokenStr, index) {
+      let hash = 2166136261;
+      for (let i = 0; i < tokenStr.length; i++) {
+        hash ^= tokenStr.charCodeAt(i);
+        hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+      }
+      const vocabSize = 100256;
+      return Math.abs(hash % vocabSize) + (index % 7);
+    }
+
+    function processTokens() {
+      const text = document.getElementById('inputText').value;
+      const visualizer = document.getElementById('tokenVisualizer');
+      const tokenIDsContainer = document.getElementById('tokenIDsContainer');
+      const showWhitespace = document.getElementById('showWhitespaceToggle').checked;
+      const parseSpecial = document.getElementById('specialTokensToggle').checked;
+      const selectedModelKey = document.getElementById('modelSelect').value;
+      const viewMode = document.getElementById('viewModeSelect').value;
+
+      if (!text) {
+        document.getElementById('statTokens').innerText = '0';
+        document.getElementById('statWords').innerText = '0';
+        document.getElementById('statChars').innerText = '0';
+        document.getElementById('statRatio').innerText = '0.0 tok/word';
+        document.getElementById('statCharRatio').innerText = '0.0 char/tok';
+        document.getElementById('statCost').innerText = '$0.00000';
+        visualizer.innerHTML = `
+          <div class="w-full h-full flex flex-col items-center justify-center text-emerald-600 text-xs py-8">
+            <i class="fa-solid fa-cube text-3xl mb-2 text-yellow-400/40 animate-pulse"></i>
+            <span>Type or paste prompt to visualize subword token chunks</span>
+          </div>`;
+        tokenIDsContainer.innerText = '[ ]';
+        generatedTokensData = [];
+        return;
+      }
+
+      // Advanced BPE Token Regex
+      let tokenRegex = parseSpecial ? /<\|[a-zA-Z0-9_]+\|>|\w+|[^\w\s]|\s+/g : /\w+|[^\w\s]|\s+/g;
+      const rawTokens = text.match(tokenRegex) || [];
+      const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const charCount = text.length;
+      const tokenCount = rawTokens.length;
+
+      // Stats Calculations
+      const tokPerWord = wordCount > 0 ? (tokenCount / wordCount).toFixed(1) : '0.0';
+      const charPerTok = tokenCount > 0 ? (charCount / tokenCount).toFixed(1) : '0.0';
+
+      const spec = MODEL_SPECS[selectedModelKey] || MODEL_SPECS['gpt-4o'];
+      const estimatedCost = ((tokenCount / 1000000) * spec.ratePerM).toFixed(5);
+
+      document.getElementById('statTokens').innerText = tokenCount.toLocaleString();
+      document.getElementById('statWords').innerText = wordCount.toLocaleString();
+      document.getElementById('statChars').innerText = charCount.toLocaleString();
+      document.getElementById('statRatio').innerText = `${tokPerWord} tok/word`;
+      document.getElementById('statCharRatio').innerText = `${charPerTok} char/tok`;
+      document.getElementById('statCost').innerText = `$${estimatedCost}`;
+      document.getElementById('modelRateInfo').innerText = spec.name;
+
+      visualizer.innerHTML = '';
+      generatedTokensData = [];
+
+      rawTokens.forEach((rawToken, idx) => {
+        const tokenId = generateTokenID(rawToken, idx);
+        const isSpecial = /^<\|.*\|>$/.test(rawToken);
+
+        const tokenObj = {
+          id: tokenId,
+          raw: rawToken,
+          index: idx,
+          length: rawToken.length,
+          type: isSpecial ? 'SPECIAL' : (/^\s+$/.test(rawToken) ? 'WHITESPACE' : (/^[^\w\s]+$/.test(rawToken) ? 'PUNCTUATION' : 'WORD'))
+        };
+
+        generatedTokensData.push(tokenObj);
+
+        const chip = document.createElement('span');
+        chip.onclick = () => openTokenModal(tokenObj);
+
+        if (viewMode === 'chips') {
+          const colorClass = isSpecial ? 'token-special' : COLOR_CLASSES[idx % COLOR_CLASSES.length];
+          chip.className = `token-chip ${colorClass} animate-chip-pop`;
+
+          let displayToken = rawToken;
+          if (showWhitespace) {
+            displayToken = displayToken.replace(/ /g, '␣').replace(/\n/g, '↵\n');
+          }
+          chip.innerText = displayToken;
+        } 
+        else if (viewMode === 'heatmap') {
+          let heatClass = rawToken.length <= 2 ? 'heat-low' : (rawToken.length <= 5 ? 'heat-mid' : 'heat-high');
+          chip.className = `token-chip ${heatClass}`;
+          chip.innerText = rawToken.replace(/ /g, '␣');
+        } 
+        else if (viewMode === 'hex') {
+          chip.className = 'token-chip bg-slate-900 text-yellow-300 border border-emerald-600/40 font-mono';
+          const hexStr = Array.from(rawToken).map(c => c.charCodeAt(0).toString(16)).join(' ');
+          chip.innerText = `[${hexStr}]`;
+        }
+
+        chip.title = `Click to Inspect Token #${idx + 1}\nID: ${tokenId}\nChars: ${rawToken.length}`;
+        visualizer.appendChild(chip);
+      });
+
+      tokenIDsContainer.innerText = `[ ${generatedTokensData.map(t => t.id).join(', ')} ]`;
+    }
+
+    function openTokenModal(tokenObj) {
+      document.getElementById('mTokenString').innerText = `"${tokenObj.raw.replace(/\n/g, '\\n').replace(/\t/g, '\\t')}"`;
+      document.getElementById('mTokenId').innerText = `#${tokenObj.id}`;
+      document.getElementById('mTokenLen').innerText = `${tokenObj.length} Character(s)`;
+      
+      const hexVal = Array.from(tokenObj.raw).map(c => '0x' + c.charCodeAt(0).toString(16).toUpperCase()).join(', ');
+      document.getElementById('mTokenHex').innerText = hexVal;
+      document.getElementById('mTokenType').innerText = tokenObj.type;
+
+      const modal = document.getElementById('tokenModal');
+      const box = document.getElementById('tokenModalBox');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    }
+
+    function closeTokenModal() {
+      const modal = document.getElementById('tokenModal');
+      const box = document.getElementById('tokenModalBox');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+    }
+
+    function toggleComparisonModal() {
+      const modal = document.getElementById('compareModal');
+      const isOpening = modal.classList.contains('opacity-0');
+
+      if (isOpening) {
+        const text = document.getElementById('inputText').value;
+        const rawTokens = text.match(/<\|[a-zA-Z0-9_]+\|>|\w+|[^\w\s]|\s+/g) || [];
+        const tokenCount = rawTokens.length;
+
+        const tbody = document.getElementById('compareTableBody');
+        tbody.innerHTML = '';
+
+        Object.keys(MODEL_SPECS).forEach(key => {
+          const spec = MODEL_SPECS[key];
+          const cost = ((tokenCount / 1000000) * spec.ratePerM).toFixed(5);
+          const pctCtx = ((tokenCount / spec.context) * 100).toFixed(4);
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-emerald-950/40 transition';
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-bold text-yellow-300 flex items-center gap-2">
+              <i class="fa-solid fa-microchip text-green-400"></i> ${spec.name}
+            </td>
+            <td class="py-2.5 px-3 text-emerald-200 font-bold">${tokenCount.toLocaleString()}</td>
+            <td class="py-2.5 px-3 text-emerald-400">$${spec.ratePerM.toFixed(2)}</td>
+            <td class="py-2.5 px-3 text-yellow-400 font-extrabold">$${cost}</td>
+            <td class="py-2.5 px-3 text-lime-400">${pctCtx}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function toggleAdvantagesModal() {
+      const modal = document.getElementById('advantagesModal');
+      modal.classList.toggle('opacity-0');
+      modal.classList.toggle('pointer-events-none');
+    }
+
+    function toggleFounderModal() {
+      const modal = document.getElementById('founderModal');
+      modal.classList.toggle('opacity-0');
+      modal.classList.toggle('pointer-events-none');
+    }
+
+    async function optimizePromptWithAI() {
+      const inputEl = document.getElementById('inputText');
+      const text = inputEl.value;
+      if (!text || text.trim().length === 0) {
+        showToast("Please enter a prompt first to compress!");
+        return;
+      }
+
+      const btn = document.getElementById('aiRefineBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Refining...`;
+
+      try {
+        const apiKey = ""; // Canvas provides key at runtime
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{
+            parts: [{
+              text: `Act as a prompt engineering optimization engine. Rewrite the following text to make it more concise and token-efficient while retaining all key meaning and technical accuracy. Return ONLY the optimized text, nothing else:\n\n"${text}"`
+            }]
+          }]
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const optimizedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (optimizedText) {
+          inputEl.value = optimizedText.trim();
+          processTokens();
+          showToast("Prompt compressed with Gemini AI!");
+        } else {
+          showToast("AI compression yielded no results.");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("Error connecting to Gemini API.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bolt-lightning"></i> AI Compress`;
+      }
+    }
+
+    function loadSamplePrompt(type) {
+      if (SAMPLE_PROMPTS[type]) {
+        document.getElementById('inputText').value = SAMPLE_PROMPTS[type];
+        processTokens();
+        showToast(`Loaded ${type.toUpperCase()} sample prompt!`);
+      }
+    }
+
+    function clearText() {
+      document.getElementById('inputText').value = '';
+      processTokens();
+      showToast('Cleared prompt text.');
+    }
+
+    function togglePresetMenu() {
+      const menu = document.getElementById('presetMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function copyTokenIDs(format) {
+      if (generatedTokensData.length === 0) {
+        showToast('No tokens available to copy!');
+        return;
+      }
+
+      let textToCopy = '';
+      const ids = generatedTokensData.map(t => t.id);
+
+      if (format === 'json') {
+        textToCopy = JSON.stringify({
+          model: document.getElementById('modelSelect').value,
+          total_tokens: ids.length,
+          token_ids: ids
+        }, null, 2);
+      } else {
+        textToCopy = `[${ids.join(', ')}]`;
+      }
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast(`Copied ${ids.length} Token IDs (${format.toUpperCase()})!`);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.innerText = msg;
+
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    // Close preset menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('presetMenu');
+      const button = event.target.closest('button');
+      if (menu && !menu.classList.contains('hidden') && (!button || !button.getAttribute('onclick')?.includes('togglePresetMenu'))) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    // Initialize default prompt on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSamplePrompt('code');
+    });
+  </script>
+</body>
+</html>
